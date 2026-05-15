@@ -33,3 +33,10 @@
 ::-webkit-scrollbar-thumb {
   background: #ffc107;
 }
+
+
+/* Force the Navbar to be the top-most layer */
+.navbar {
+  z-index: 9999 !important;
+  position: sticky;
+}
