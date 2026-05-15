@@ -5,7 +5,6 @@ const Plans = () => {
   return (
     <DotPattern>
       <div className="container py-5">
-        {/* Header */}
         <div className="text-center mb-5 mt-4">
           <h1 className="display-3 fw-bold text-white">
             Choose Your <span className="text-warning">Power</span>
@@ -14,8 +13,7 @@ const Plans = () => {
         </div>
 
         <div className="row justify-content-center g-4">
-          
-          {/* Student Plan */}
+
           <div className="col-md-4">
             <div className="card h-100 border-secondary shadow text-white" 
                  style={{ background: 'rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(10px)', borderRadius: '24px' }}>
@@ -32,14 +30,13 @@ const Plans = () => {
             </div>
           </div>
 
-          {/* Pro Plan (The Best Design) */}
           <div className="col-md-4">
             <div className="card h-100 border-warning shadow-lg text-white" 
                  style={{ 
                     background: 'rgba(255, 193, 7, 0.1)', 
                     backdropFilter: 'blur(15px)', 
                     borderRadius: '24px',
-                    boxShadow: '0 0 20px rgba(255, 193, 7, 0.2)' // Glow effect
+                    boxShadow: '0 0 20px rgba(255, 193, 7, 0.2)'
                  }}>
               <div className="card-body p-4 d-flex flex-column text-center">
                 <div className="badge bg-warning text-dark rounded-pill mb-3 align-self-center px-3">MOST POPULAR</div>
@@ -56,7 +53,6 @@ const Plans = () => {
             </div>
           </div>
 
-          {/* Enterprise Plan */}
           <div className="col-md-4">
             <div className="card h-100 border-secondary shadow text-white" 
                  style={{ background: 'rgba(255, 255, 255, 0.05)', backdropFilter: 'blur(10px)', borderRadius: '24px' }}>

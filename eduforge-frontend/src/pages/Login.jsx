@@ -1,68 +1,133 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import DotPattern from '../components/DotPattern';
+import { login, signup } from '../api'; 
+import { useNavigate } from 'react-router-dom';
+import * as bootstrap from 'bootstrap';
+import toast, { Toaster } from 'react-hot-toast'; 
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const navigate = useNavigate();
+  const passwordRef = useRef(null);
+  const tooltipRef = useRef(null);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: ''
+  });
+
+  useEffect(() => {
+    if (passwordRef.current) {
+      tooltipRef.current = new bootstrap.Tooltip(passwordRef.current, {
+        title: "Min 8 chars, 1 letter, 1 number",
+        trigger: 'manual',
+        placement: 'right'
+      });
+    }
+    return () => tooltipRef.current?.dispose();
+  }, [isLogin]);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    tooltipRef.current?.hide();
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; 
+
+    if (!isLogin && !passwordRegex.test(formData.password)) {
+      tooltipRef.current?.show();
+      toast.error("Password is too weak!", { id: 'pass-error' });
+      setTimeout(() => tooltipRef.current?.hide(), 3000);
+      return;
+    }
+
+    try {
+      if (isLogin) {
+        const { data } = await login({ email: formData.email, password: formData.password });
+        localStorage.setItem('profile', JSON.stringify(data));
+        navigate('/profile');
+      } else {
+        await signup(formData);
+        toast.success("Account created successfully! Please log in.");
+        setIsLogin(true);
+      }
+    } catch (error) {
+      const message = error.response?.data?.message || "An error occurred";
+      toast.error(message);
+    }
+  };
 
   return (
     <DotPattern>
-    <div class="container d-flex justify-content-center mt-5">
-        <div class="card bg-dark text-white border-secondary p-4 shadow-lg rounded-4 w-100" style={{ maxWidth: '400px' }}>
+      <Toaster position="center" reverseOrder={false} />
+      <div className="container d-flex justify-content-center my-4">
+        <div className="card bg-dark text-white border-secondary p-3 rounded-2 w-100" style={{ maxWidth: '400px' }}>
           
-          <div class="text-center mb-4">
-            <h2 class="fw-bold">
+          <div className="text-center mb-3">
+            <h2>
               {isLogin ? 'Welcome ' : 'Join '} 
-              <span class="text-warning">EduForge</span>
+              <span className="text-warning">EduForge</span>
             </h2>
-            <p class="text-secondary">
+            <p className="text-secondary">
               {isLogin ? 'Sign in to your account' : 'Register for a new account'}
             </p>
           </div>
 
-          <form onSubmit={(e) => e.preventDefault()}>
+          <form onSubmit={handleSubmit}>
             {!isLogin && (
-              <div class="mb-3">
-                <label class="form-label text-warning">Full Name</label>
+              <div className="mb-3">
+                <label className="form-label text-warning">Full Name</label>
                 <input 
+                  name="name"
                   type="text" 
-                  class="form-control bg-dark text-white border-secondary" 
+                  className="form-control bg-dark text-white border-secondary" 
                   required  
+                  onChange={handleChange}
                 />
               </div>
             )}
 
-            <div class="mb-3">
-              <label class="form-label text-warning">Email Address</label>
+            <div className="mb-3">
+              <label className="form-label text-warning">Email Address</label>
               <input 
+                name="email" 
                 type="email" 
-                class="form-control bg-dark text-white border-secondary" 
+                className="form-control bg-dark text-white border-secondary" 
                 required
+                onChange={handleChange}
               />
             </div>
 
-            <div class="mb-4">
-              <label class="form-label text-warning">Password</label>
+            <div className="mb-3">
+              <label className="form-label text-warning">Password</label>
               <input 
+                ref={passwordRef}
+                name="password" 
                 type="password" 
-                class="form-control bg-dark text-white border-secondary" 
+                className="form-control bg-dark text-white border-secondary" 
                 required
+                onChange={handleChange} 
               />
             </div>
 
-            <button class="btn btn-warning w-75 d-flex justify-content-center fw-bold rounded-4 mx-auto mb-3">
+            <button type="submit" className="btn btn-warning w-75 d-flex justify-content-center fw-bold rounded-3 mx-auto mb-3">
               {isLogin ? 'Login' : 'Sign Up'}
             </button>
 
-            <div class="text-center">
+            <div className="text-center">
               <button 
                 type="button" 
-                class="btn border-0 text-white text-decoration-none opacity-75"
+                className="btn border-0 text-white opacity-75"
                 onClick={() => setIsLogin(!isLogin)}
               >
                 {isLogin ? "No account? " : "Have an account? "}
-                <span class="text-warning fw-bold">
+                <h6 className="text-warning">
                   {isLogin ? 'Register' : 'Sign In'}
-                </span>
+                </h6>
               </button>
             </div>
 

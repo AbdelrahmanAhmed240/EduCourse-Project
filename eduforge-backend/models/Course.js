@@ -1,19 +1,22 @@
 import mongoose from 'mongoose';
 
-const courseSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  level: { type: String, default: 'Beginner' },
-  units: [{
-    title: String,
-    videoId: String,
-    summary: String,
+const unitSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    videoId: { type: String, required: true },
+    summary: { type: String, required: true }, // Combined dissertation content
     quiz: [{
-      question: String,
-      options: [String],
-      answer: String
+        text: String,
+        options: [String],
+        correct: { type: Number, required: true }
     }]
-  }],
-  createdAt: { type: Date, default: Date.now }
+});
+
+const courseSchema = new mongoose.Schema({
+    userId: { type: String, required: true },
+    title: { type: String, required: true },
+    level: { type: String, required: true },
+    units: [unitSchema],
+    createdAt: { type: Date, default: Date.now }
 });
 
 export default mongoose.model('Course', courseSchema);
