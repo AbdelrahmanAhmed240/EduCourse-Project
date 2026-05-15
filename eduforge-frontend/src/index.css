@@ -1,0 +1,35 @@
+* {
+    font-family: 'Inter', sans-serif;
+}
+
+.nav-link, .navbar-brand {
+    transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+.nav-link:hover, .navbar-brand:hover {
+    color: #ffc107 !important;
+}
+
+.custom-btn {
+  background-color: #ffc107;
+  color: #343232;
+  border: 1px solid #ffc107;
+  transition: all 0.2s ease;
+  text-decoration: none !important;
+}
+
+.custom-btn:hover {
+  background-color: transparent;
+  color: #ffc107;
+  border-color: #ffc107;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: #111528;
+}
+::-webkit-scrollbar-thumb {
+  background: #ffc107;
+}
