@@ -1,3 +1,4 @@
+import { useState } from 'react'; 
 import { Link, useNavigate } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
 import { useCourse } from '../context/CourseContext';
@@ -6,10 +7,10 @@ const NavigationBar = () => {
   const navigate = useNavigate();
   const { clearCourse } = useCourse();
   
-  // 1. Get user data from localStorage
-  const user = JSON.parse(localStorage.getItem('profile'));
 
-  // 2. Logout handler
+  const user = JSON.parse(localStorage.getItem('profile'));
+  const [isOpen, setIsOpen] = useState(false);
+
   const handleLogout = () => {
     clearCourse();
     localStorage.removeItem('profile');
@@ -21,14 +22,22 @@ const NavigationBar = () => {
     <nav className="navbar navbar-expand-lg bg-dark sticky-top shadow">
       <div className="container">
         <Link to="/" className="navbar-brand text-light fw-bold fs-4">
-          <span className="text-warning">Edu</span>Forge AI
+          <span className="text-warning">Edu</span>Course AI
         </Link>
         
-        <button className="navbar-toggler" type="button" data-bs-theme="dark" data-bs-toggle="collapse" data-bs-target="#eduNavbar">
+        <button 
+          className="navbar-toggler" 
+          type="button" 
+          onClick={() => setIsOpen(!isOpen)}
+          aria-controls="eduNavbar"
+          aria-expanded={isOpen}
+          aria-label="Toggle navigation"
+           data-bs-theme="dark"
+        >
           <span className="navbar-toggler-icon"></span>
         </button>
         
-        <div className="collapse navbar-collapse" id="eduNavbar">
+        <div className={`collapse navbar-collapse ${isOpen ? 'show' : ''}`} id="eduNavbar">
           <div className="navbar-nav ms-auto align-items-center gap-3">
             <Link to="/dashboard" className="nav-link text-light">
               My Courses
@@ -44,10 +53,9 @@ const NavigationBar = () => {
               </button>
             </Link>
 
-            {/* 3. DYNAMIC PROFILE SECTION */}
             {user ? (
               <div className="nav-item dropdown">
-                <a 
+                <Link
                   className="nav-link text-warning dropdown-toggle d-flex align-items-center gap-2" 
                   href="#" 
                   role="button" 
@@ -56,7 +64,7 @@ const NavigationBar = () => {
                 >
                   <FaUserCircle size={25} />
                   <span className="small">{user.result.name.split(' ')[0]}</span>
-                </a>
+                </Link>
                 <ul className="dropdown-menu dropdown-menu-dark dropdown-menu-end">
                   <li><Link className="dropdown-item" to="/profile">My Profile</Link></li>
                   <li><Link className="dropdown-item" to="/dashboard">Dashboard</Link></li>
