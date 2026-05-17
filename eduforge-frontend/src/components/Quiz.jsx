@@ -5,40 +5,26 @@ const Quiz = ({ questions }) => {
   const [submitted, setSubmitted] = useState(false);
 
   if (!questions || questions.length === 0) return null;
+  const quiz = questions[0];
 
   return (
-    <div class="card bg-dark border-warning text-white p-4 shadow">
-      <h5 class="text-warning mb-3">Unit Quiz</h5>
-      <p class="mb-4">{questions[0].text}</p>
+    <div className="card bg-dark border-warning text-white p-4 shadow">
+      <h5 className="text-warning mb-3">Unit Quiz</h5>
+      <p className="mb-4">{quiz.text}</p>
       
-      <form>
-        {questions[0].options.map((opt, i) => (
-          <div key={i} class="form-check mb-3">
-            <input 
-              class="form-check-input" 
-              type="radio" 
-              name="quiz" 
-              id={`q-${i}`}
-              onChange={() => setSelected(i)}
-              disabled={submitted}
-            />
-            <label class="form-check-label ms-2" htmlFor={`q-${i}`}>
-              {opt}
-            </label>
-          </div>
-        ))}
-      </form>
+      {quiz.options.map((opt, i) => (
+        <div key={i} className="form-check mb-3">
+          <input className="form-check-input" type="radio" name="quiz" disabled={submitted} onChange={() => setSelected(i)} />
+          <label className="form-check-label">{opt}</label>
+        </div>
+      ))}
 
       {submitted ? (
-        <div class={`mt-3 fw-bold p-2 rounded ${selected === questions[0].correct ? "text-success bg-success bg-opacity-10" : "text-danger bg-danger bg-opacity-10"}`}>
-          {selected === questions[0].correct ? "✨ Correct! Well done." : "❌ Incorrect. Try reviewing the video."}
+        <div className={`p-3 bg-opacity-10 ${selected === quiz.correct ? "text-success bg-success" : "text-danger bg-danger"}`}>
+          {selected === quiz.correct ? "✨ Correct! Well done." : "❌ Incorrect. Try reviewing the video."}
         </div>
       ) : (
-        <button 
-          class="btn btn-warning mt-2 fw-bold px-4 rounded-pill" 
-          onClick={() => setSubmitted(true)}
-          disabled={selected === null}
-        >
+        <button className="btn btn-warning mt-2 fw-bold p-3 rounded-3" disabled={selected === null} onClick={() => setSubmitted(true)}>
           Submit Answer
         </button>
       )}

@@ -28,14 +28,14 @@ const Dashboard = () => {
     <DotPattern>
       <div className="container py-4">
         <div className="row">
-          {/* Sidebar */}
           <div className="col-lg-3 mb-4">
-            <div className="card bg-dark border-secondary sticky-top shadow-sm" style={{ top: '20px' }}>
-              <div className="card-header bg-warning text-dark fw-bold border-0">SYLLABUS</div>
+            <div className="card bg-dark border-secondary">
+              <div className="card-header bg-warning">SYLLABUS</div>
               <div className="list-group list-group-flush">
                 {units.map((unit, index) => (
-                  <button key={index} onClick={() => { setActiveUnit(index); setShowQuiz(false); window.scrollTo(0,0); }}
-                    className={`list-group-item list-group-item-action border-secondary py-3 text-start ${activeUnit === index ? "bg-secondary text-warning fw-bold" : "bg-dark text-light opacity-50"}`}>
+                  <button 
+                    key={index} onClick={() => { setActiveUnit(index); setShowQuiz(false); }}
+                    className={`list-group-item list-group-item-action border-secondary p-3 text-start ${activeUnit === index ? "bg-dark text-warning" : "bg-dark text-light opacity-25"}`}>
                     {index + 1}. {unit.title}
                   </button>
                 ))}
@@ -43,7 +43,6 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Reader Area */}
           <div className="col-lg-9">
             <div className="card bg-dark border-secondary shadow-lg overflow-hidden border-0">
               {currentUnit ? (
@@ -51,38 +50,38 @@ const Dashboard = () => {
                   <Ratio aspectRatio="16x9">
                     {currentUnit.videoId === "unavailable" ? (
                       <div className="d-flex flex-column align-items-center justify-content-center bg-black text-warning p-5 text-center">
-                        <h2 className="fw-bold h4">⚠️ VIDEO QUOTA EMPTY</h2>
+                        <h2 className="fw-bold">⚠️ VIDEO QUOTA EMPTY</h2>
                         <p className="text-muted">Please study the technical dissertation below.</p>
                       </div>
                     ) : (
-                      <iframe src={`https://www.youtube.com/embed/${currentUnit.videoId}`} title="video" allowFullScreen className="border-0"></iframe>
+                      <iframe src={`https://www.youtube.com/embed/${currentUnit.videoId}`} title="video" allowFullScreen></iframe>
                     )}
                   </Ratio>
 
-                  <div className="card-body p-4 p-md-5">
-                    <h1 className="text-warning fw-bold text-center mb-5 h2">{currentUnit.title}</h1>
+                  <div className="card-body p-4">
+                    <h2 className="text-warning text-center mb-4">{currentUnit.title}</h2>
                     
-                    <hr className="border-secondary opacity-25 mb-5" />
+                    <hr className="border-secondary opacity-25 mb-4" />
 
-                    <article className="mx-auto text-light lh-lg fs-5" style={{ maxWidth: '800px', textAlign: 'justify' }}>
+                    <article className="text-light fs-5">
                         <ReactMarkdown 
                           components={{
-                            strong: ({node, ...props}) => <strong className="text-warning fw-bold" {...props} />,
+                            strong: ({node, ...props}) => <strong className="text-warning" {...props} />,
                             code: ({node, inline, ...props}) => (
-                              inline 
-                              ? <code className="bg-black text-info px-2 py-1 rounded small" {...props} />
-                              : <pre className="bg-black text-success p-4 rounded border-start border-warning border-4 my-4 overflow-auto small shadow-sm"><code {...props} /></pre>
+                              <pre className="bg-black text-success p-3 rounded border-start border-warning border-2 overflow-x-auto my-2 w-100">
+                                <code {...props} />
+                              </pre>
                             ),
-                            p: ({node, ...props}) => <p className="mb-5" {...props} />
+                            p: ({node, ...props}) => <p className="mb-4" {...props} />
                           }}
                         >
                           {currentUnit.summary?.replace(/\|/g, '\n\n')}
                         </ReactMarkdown>
                     </article>
 
-                    <div className="mt-5 pt-5 border-top border-secondary text-center">
+                    <div className="mt-5 pt-4 border-top border-secondary text-center">
                         {!showQuiz ? (
-                          <button className="btn btn-warning w-100 py-3 rounded-pill fw-bold" onClick={() => setShowQuiz(true)}>Start Unit Quiz</button>
+                          <button className="btn btn-warning w-100 p-3 rounded-3  fw-bold" onClick={() => setShowQuiz(true)}>Start Unit Quiz</button>
                         ) : (
                           <Quiz questions={currentUnit.quiz} />
                         )}
@@ -90,7 +89,7 @@ const Dashboard = () => {
                   </div>
                 </>
               ) : (
-                <div className="p-5 text-center text-white opacity-50">Forging technical assets...</div>
+                <div className="p-5 text-center text-white opacity-50">Creating technical assets...</div>
               )}
             </div>
           </div>
