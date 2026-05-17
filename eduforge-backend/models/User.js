@@ -1,11 +1,13 @@
 import mongoose from 'mongoose';
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     plan: { type: String, default: 'Student' },
-    createdAt: { type: Date, default: new Date() }
-});
+    // 🛡️ CRITICAL FIX: You must define this so MongoDB accepts the sequential integer
+    customId: { type: Number, unique: true } 
+}, { timestamps: true });
 
-export default mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
+export default User;
