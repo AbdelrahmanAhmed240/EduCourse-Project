@@ -33,7 +33,7 @@ const Generator = () => {
     <DotPattern>
       <Toaster position="top-center" />
       <div className="py-5 container">
-        <div className="card p-5 border-secondary mx-auto bg-dark shadow-lg" style={{ maxWidth: '600px' }}>
+        <div className="card p-5 border-secondary mx-auto bg-dark" style={{ maxWidth: '600px' }}>
           <h2 className="text-center mb-3 text-white">Course <span className="text-warning">Generator</span></h2>
           <form onSubmit={handleCreate}>
             <div className="mb-3">

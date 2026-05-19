@@ -90,7 +90,7 @@ const Login = () => {
                 />
             </div>
 
-            <button type="submit" className="btn btn-warning w-75 d-flex justify-content-center fw-bold rounded-3 mx-auto mb-3">
+            <button type="submit" className="btn btn-warning w-75 d-flex justify-content-center fw-bold rounded-3 mx-auto my-4">
               {isLogin ? 'Login' : 'Sign Up'}
             </button>
 
