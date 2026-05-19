@@ -12,31 +12,19 @@
 
 .custom-btn {
   background-color: #ffc107;
-  color: #343232;
-  border: 1px solid #ffc107;
-  transition: all 0.2s ease;
-  text-decoration: none !important;
 }
 
 .custom-btn:hover {
   background-color: transparent;
   color: #ffc107;
-  border-color: #ffc107;
 }
 
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 3px;
 }
 ::-webkit-scrollbar-track {
-  background: #111528;
+  background: #000000;
 }
 ::-webkit-scrollbar-thumb {
   background: #ffc107;
-}
-
-
-/* Force the Navbar to be the top-most layer */
-.navbar {
-  z-index: 9999 !important;
-  position: sticky;
 }
