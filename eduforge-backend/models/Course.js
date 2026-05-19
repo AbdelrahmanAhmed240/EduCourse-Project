@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const unitSchema = new mongoose.Schema({
     title: { type: String, required: true },
     videoId: { type: String, required: true },
-    summary: { type: String, required: true }, // Combined dissertation content
+    summary: { type: String, required: true }, 
     quiz: [{
         text: String,
         options: [String],

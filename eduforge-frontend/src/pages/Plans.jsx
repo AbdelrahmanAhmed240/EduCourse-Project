@@ -10,7 +10,7 @@ const Plans = () => {
           <h1 className="display-4 fw-bold">Choose Your <span className="text-warning">Plan</span></h1>
         </div>
 
-        <div className="row justify-content-center align-items-stretch g-4">
+        <div className="row justify-content-center g-4">
 
           <div className="col-lg-4">
             <div className="card h-100 border-secondary rounded-2 p-2 bg-dark text-white">
@@ -37,8 +37,8 @@ const Plans = () => {
               <div className="card-body d-flex flex-column text-center">
                 <span className="badge bg-warning text-dark mb-2 p-2">MOST POPULAR</span>
                 <h3 className="fw-bold text-warning">Edu Pro ✨</h3>
-                <h1 className="mb-3">$9.99<span className="fs-5 fw-normal text-muted">/mo</span></h1>
-                <ul className="list-unstyled flex-grow-1 text-start text-light">
+                <h1 className="mb-3">$9.99<span className="fs-5 fw-normal">/mo</span></h1>
+                <ul className="list-unstyled flex-grow-1 text-start">
                   <li className="mb-2">✓ <strong>Unlimited</strong> AI Units</li>
                   <li className="mb-2">✓ Multi-Language Explanations</li>
                   <li className="mb-2">✓ PDF Exporting</li>

@@ -61,14 +61,14 @@ const Dashboard = () => {
                   <div className="card-body p-4">
                     <h2 className="text-warning text-center mb-4">{currentUnit.title}</h2>
                     
-                    <hr className="border-secondary opacity-25 mb-4" />
+                    <hr className="border-secondary mb-4"/>
 
                     <article className="text-light fs-5">
                         <ReactMarkdown 
                           components={{
                             strong: ({node, ...props}) => <strong className="text-warning" {...props} />,
                             code: ({node, inline, ...props}) => (
-                              <pre className="bg-black text-success p-3 rounded border-start border-warning border-2 overflow-x-auto my-2 w-100">
+                              <pre className="bg-black text-success p-3 rounded border-start border-warning overflow-x-auto my-2 w-100">
                                 <code {...props} />
                               </pre>
                             ),
@@ -89,7 +89,7 @@ const Dashboard = () => {
                   </div>
                 </>
               ) : (
-                <div className="p-5 text-center text-white opacity-50">Creating technical assets...</div>
+                <div className="p-5 text-center text-white opacity-50">Start Creating from Create Course Button...</div>
               )}
             </div>
           </div>

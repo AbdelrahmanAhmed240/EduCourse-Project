@@ -14,7 +14,7 @@ const Home = () => (
       </div>
       <div className="w-75">
         <p className="lead text-light opacity-75">
-          EduForge AI transforms any topic into a structured course with 
+          EduCourse AI transforms any topic into a structured course with 
           <span className="text-warning fw-bold"> theory, videos, and quizzes </span> 
           in seconds—all for free.
         </p>
