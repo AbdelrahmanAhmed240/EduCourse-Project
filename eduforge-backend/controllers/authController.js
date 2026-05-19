@@ -2,7 +2,6 @@ import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-// 1. User Registration Engine with Sequential Integer Auto-Generation
 export const register = async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -32,7 +31,6 @@ export const register = async (req, res) => {
     }
 };
 
-// 2. User Authentication Portal
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -44,35 +42,31 @@ export const login = async (req, res) => {
 
         const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
         
-        // Return the entire user object ensuring frontend receives the customId property
         res.status(200).json({ result: user, token });
     } catch (error) {
         res.status(500).json({ message: "Login failed" });
     }
 };
 
-// 3. Dynamic Profile Endpoint (The Vulnerability Target)
 export const getUserProfile = async (req, res) => {
     try {
-        const { id } = req.params; // Grabs the clean integer string (e.g., "1" or "2")
-
-        // 🛡️ THE ACCESS CONTROL LAYER (The Mitigation Goal)
-        // -----------------------------------------------------------------
+        const { id } = req.params; 
         // ❌ STATE 1 (Vulnerable): Leave this block commented out for your attack demonstration.
         // 🛡️ STATE 2 (Mitigated): Uncomment this block to show the live fix!
-        /*
-        const loggedInUser = await User.findById(req.userId);
-        if (!loggedInUser || loggedInUser.customId !== parseInt(id)) {
-            return res.status(403).json({ 
-                message: "Access Denied: Security Violation. You do not have permission to view this profile." 
-            });
-        }
-        */
-        // -----------------------------------------------------------------
-
-        // Developer Shortcut Flaw: Fetching data blindly based on the integer parameter input
+        // const loggedInUser = await User.findById(req.userId);
+        // if (!loggedInUser || loggedInUser.customId !== parseInt(id)) {
+        //     return res.status(403).json({ 
+        //         message: "Access Denied: Security Violation. You do not have permission to view this profile." 
+        //     });
+        // }
         const user = await User.findOne({ customId: parseInt(id) });
+        
         if (!user) return res.status(404).json({ message: "User not found" });
+
+
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
 
         res.status(200).json(user);
     } catch (error) {

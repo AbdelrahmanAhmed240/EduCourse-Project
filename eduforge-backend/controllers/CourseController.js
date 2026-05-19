@@ -70,10 +70,7 @@ export const createCourse = async (req, res) => {
 
         for (const unit of unitsArray) {
             try {
-                // Simplified, professional query targeting high-relevance educational material
                 const searchQuery = `"${topic}" ${unit.title} lecture tutorial`.trim();
-
-                // 1. Initial Search Request to get a pool of candidate videos
                 const ytSearchRes = await axios.get(`https://www.googleapis.com/youtube/v3/search`, {
                     params: {
                         part: 'snippet',
@@ -82,17 +79,15 @@ export const createCourse = async (req, res) => {
                         maxResults: 12,
                         type: 'video',
                         videoEmbeddable: 'true',
-                        relevanceLanguage: 'en' // Filters search pool to English results natively
+                        relevanceLanguage: 'en' 
                     }
                 });
 
                 const searchItems = ytSearchRes.data.items || [];
                 const candidateIds = searchItems.map(item => item.id?.videoId).filter(Boolean);
-
-                let assignedVideoId = "w7ejDZ8SWv8"; // Default premium fallback video
+                let assignedVideoId = "w7ejDZ8SWv8";
 
                 if (candidateIds.length > 0) {
-                    // 2. Deep Inspection Request: Fetch content details (durations) for the entire pool at once
                     const ytDetailsRes = await axios.get(`https://www.googleapis.com/youtube/v3/videos`, {
                         params: {
                             part: 'contentDetails,snippet',
@@ -103,7 +98,6 @@ export const createCourse = async (req, res) => {
 
                     const detailedItems = ytDetailsRes.data.items || [];
 
-                    // 3. Deduplication & Minimum Duration Validation Engine
                     for (const videoItem of detailedItems) {
                         const currentId = videoItem.id;
                         const videoTitle = videoItem.snippet?.title?.toLowerCase() || "";
@@ -112,7 +106,6 @@ export const createCourse = async (req, res) => {
                         const durationInSeconds = parseISO8601Duration(isoDuration);
 
                         if (currentId && !globalUsedVideos.has(currentId)) {
-                            // Reject if explicitly labeled a short, or if it is shorter than 5 minutes (300 seconds)
                             if (videoTitle.includes("#shorts") || videoTitle.includes("youtube shorts") || durationInSeconds < 300) {
                                 continue; 
                             }
@@ -123,12 +116,9 @@ export const createCourse = async (req, res) => {
                         }
                     }
                 }
-
-                // Emergency fallback if strict validation completely emptied our list
                 if (assignedVideoId === "w7ejDZ8SWv8" && candidateIds.length > 0) {
                     assignedVideoId = candidateIds[0];
                 }
-
                 const fullSummary = [
                     unit.summary,
                     `**Implementation Logic:** ${unit.explanation}`,
