@@ -1,15 +1,10 @@
 import axios from 'axios';
 
-// Safely handles the base URL without checking process.env directly to avoid breaking Vite/React builds
 const getBaseURL = () => {
-  try {
-    // If you use Create-React-App environment variables
-    if (typeof process !== 'undefined' && process.env && process.env.REACT_APP_BACKEND_URL) {
-      return process.env.REACT_APP_BACKEND_URL;
-    }
-  } catch (e) {}
-
-  // Default fallback for your local server
+  const productionURL = 'https://educourse-project-production.up.railway.app/api'; 
+  if (window.location.hostname !== 'localhost') {
+    return productionURL;
+  }
   return 'http://localhost:5000/api';
 };
 
