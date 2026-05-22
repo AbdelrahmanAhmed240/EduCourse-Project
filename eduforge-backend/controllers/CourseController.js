@@ -1,8 +1,8 @@
 import Course from '../models/Course.js';
-import Groq from 'groq-sdk';
+import User from '../models/User.js'; 
+import { HfInference } from '@huggingface/inference';
 import axios from 'axios';
 
-// Helper function to convert ISO 8601 duration (e.g., PT14M32S) into total seconds
 const parseISO8601Duration = (durationString) => {
     const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
     const matches = durationString.match(regex);
@@ -17,53 +17,82 @@ const parseISO8601Duration = (durationString) => {
 
 export const createCourse = async (req, res) => {
     const { topic, units, level } = req.body;
-    const groq = new Groq({ apiKey: process.env.API_KEY });
+    const hf = new HfInference(process.env.API_KEY);
 
     try {
-        const chatCompletion = await groq.chat.completions.create({
-            messages: [
-                {
-                    role: "system",
-                    content: "You are an elite software engineer and technical educator. You respond exclusively in English via flawless, raw JSON objects conforming exactly to the user's schema definition. Never include unescaped quotes or raw backticks inside JSON values."
-                },
-                {
-                    role: "user",
-                    content: `Create a comprehensive, highly structured academic and practical course about "${topic}" tailored for a "${level}" level.
-                    Generate EXACTLY ${units} independent learning units.
+        const user = await User.findById(req.userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
 
-                    STRICT RULES:
-                    - LANGUAGE: All content MUST be written in fluent, professional English only.
-                    - EXPLANATION DEPTH: The 'summary' field MUST be roughly 100-150 words of deep technical explanation. Keep it dense but concise so all ${units} units fit perfectly within rate limits without truncating.
-                    - NO ESSAYS: Break the summary into exactly 5 separate sections using the "|" character ONLY.
-                    - CONTENT: Focus on real-world implementation, syntax, and engineering logic.
-                    - FORMAT VERSATILITY: Ensure the fields work for any technical topic. Do not write raw markdown backticks or unescaped double quotes inside the string values.
-                    - QUIZ: 'correct' must be a valid integer index (0-3).
+        if (user.plan === 'Student') {
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-                    JSON FORMAT:
-                    {
-                      "units": [
-                        {
-                          "title": "Distinct Subtopic Title",
-                          "summary": "Core definition section 1... | Deep theoretical breakdown section 2... | Mathematical/Engineering model section 3... | Real-world application case section 4... | Advanced problem-solving analysis section 5...",
-                          "explanation": "Clear technical overview sentence outlining the core educational goal.",
-                          "syntax": "Syntax reference or core law blueprint structure.",
-                          "exampleCode": "Real working code or functional case example.",
-                          "outputExplanation": "Logic and trace analysis.",
-                          "bestPractices": ["Practice 1"],
-                          "commonMistakes": ["Mistake 1"],
-                          "quiz": [{"text": "Question?", "options": ["A", "B", "C", "D"], "correct": 0}]
-                        }
-                      ]
-                    }`
-                }
-            ],
-            model: "llama-3.1-8b-instant",
-            response_format: { type: "json_object" },
-            max_tokens: 3000,
-            temperature: 0.1
+            const coursesThisWeekCount = await Course.countDocuments({
+                userId: req.userId,
+                createdAt: { $gte: sevenDaysAgo }
+            });
+
+            if (coursesThisWeekCount >= 3) {
+                return res.status(403).json({ 
+                    message: "Generation limit reached. Students can only generate up to 3 courses per week." 
+                });
+            }
+        }
+
+        // Wipe out any existing courses created by this user before generating a new one
+        await Course.deleteMany({ userId: req.userId });
+
+        const promptContext = `You are an elite software engineer and technical educator. You respond exclusively in English via flawless, raw JSON objects conforming exactly to the user's schema definition. Never include unescaped quotes or raw backticks inside JSON values.
+
+Create a comprehensive, highly structured academic and practical course about "${topic}" tailored for a "${level}" level.
+Generate EXACTLY ${units} independent learning units.
+
+STRICT RULES:
+- LANGUAGE: All content MUST be written in fluent, professional English only.
+- EXPLANATION DEPTH: The 'summary' field MUST be roughly 100-150 words of deep technical explanation. Keep it dense but concise.
+- NO ESSAYS: Break the summary into exactly 5 separate sections using the "|" character ONLY.
+- CONTENT: Focus on real-world implementation, syntax, and engineering logic.
+- FORMAT VERSATILITY: Ensure the fields work for any technical topic. Do not write raw markdown backticks or unescaped double quotes inside the string values.
+- QUIZ: 'correct' must be a valid integer index (0-3).
+
+JSON FORMAT:
+{
+  "units": [
+    {
+      "title": "Distinct Subtopic Title",
+      "summary": "Core definition section 1... | Deep theoretical breakdown section 2... | Mathematical/Engineering model section 3... | Real-world application case section 4... | Advanced problem-solving analysis section 5...",
+      "explanation": "Clear technical overview sentence outlining the core educational goal.",
+      "syntax": "Syntax reference or core law blueprint structure.",
+      "exampleCode": "Real working code or functional case example.",
+      "outputExplanation": "Logic and trace analysis.",
+      "bestPractices": ["Practice 1"],
+      "commonMistakes": ["Mistake 1"],
+      "quiz": [{"text": "Question?", "options": ["A", "B", "C", "D"], "correct": 0}]
+    }
+  ]
+}`;
+
+        // FIX: Increased max_tokens and explicitly declared JSON output grammar limits
+        const chatCompletion = await hf.chatCompletion({
+            model: "Qwen/Qwen2.5-Coder-32B-Instruct",
+            messages: [{ role: "user", content: promptContext }],
+            max_tokens: 5000,
+            temperature: 0.1,
+            response_format: { type: "json_object" }
         });
 
-        const aiData = JSON.parse(chatCompletion.choices[0].message.content);
+        let cleanText = chatCompletion.choices[0].message.content.trim();
+        
+        // Safety strip block wrappers if present
+        if (cleanText.startsWith("```json")) {
+            cleanText = cleanText.substring(7, cleanText.length - 3).trim();
+        } else if (cleanText.startsWith("```")) {
+            cleanText = cleanText.substring(3, cleanText.length - 3).trim();
+        }
+
+        const aiData = JSON.parse(cleanText);
         const unitsArray = aiData.units || [];
         const finalizedUnits = [];
         const globalUsedVideos = new Set();
@@ -85,7 +114,6 @@ export const createCourse = async (req, res) => {
 
                 const searchItems = ytSearchRes.data.items || [];
                 const candidateIds = searchItems.map(item => item.id?.videoId).filter(Boolean);
-
                 let assignedVideoId = "w7ejDZ8SWv8";
 
                 if (candidateIds.length > 0) {
@@ -103,14 +131,12 @@ export const createCourse = async (req, res) => {
                         const currentId = videoItem.id;
                         const videoTitle = videoItem.snippet?.title?.toLowerCase() || "";
                         const isoDuration = videoItem.contentDetails?.duration || "";
-                        
                         const durationInSeconds = parseISO8601Duration(isoDuration);
 
                         if (currentId && !globalUsedVideos.has(currentId)) {
                             if (videoTitle.includes("#shorts") || videoTitle.includes("youtube shorts") || durationInSeconds < 300) {
                                 continue; 
                             }
-                            
                             assignedVideoId = currentId;
                             globalUsedVideos.add(currentId); 
                             break;
@@ -165,5 +191,29 @@ export const getCourses = async (req, res) => {
         res.status(200).json(courses);
     } catch (error) {
         res.status(404).json({ message: "No courses found" });
+    }
+};
+
+export const getRemainingCreations = async (req, res) => {
+    try {
+        const user = await User.findById(req.userId);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        if (user.plan !== 'Student') {
+            return res.status(200).json({ remaining: Infinity, plan: user.plan });
+        }
+
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+        const coursesThisWeekCount = await Course.countDocuments({
+            userId: req.userId,
+            createdAt: { $gte: sevenDaysAgo }
+        });
+
+        const remaining = Math.max(0, 3 - coursesThisWeekCount);
+        return res.status(200).json({ remaining, plan: user.plan });
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching creation limits balance", error: error.message });
     }
 };

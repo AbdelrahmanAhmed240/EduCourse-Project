@@ -74,13 +74,13 @@ const DotPattern = ({
   }, [buildGrid, draw]);
 
   return (
-    <div ref={containerRef} class="position-relative overflow-hidden bg-dark min-vh-100">
+    <div ref={containerRef} className="position-relative overflow-hidden bg-dark min-vh-100">
       <canvas 
         ref={canvasRef} 
-        class="position-absolute top-0 start-0 w-100 h-100" 
+        className="position-absolute top-0 start-0 w-100 h-100" 
         style={{ pointerEvents: 'none' }}
       />
-      <div class="position-relative z-1">{children}</div>
+      <div className="position-relative z-1">{children}</div>
     </div>
   );
 };

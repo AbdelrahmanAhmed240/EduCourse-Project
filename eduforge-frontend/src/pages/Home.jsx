@@ -1,5 +1,4 @@
-"use client";
-import { useCallback, useEffect, useRef } from "react";
+// Removed "use client"; directive completely to fit standard SPA configurations safely
 import { Link } from "react-router-dom";
 import DotPattern from "../components/DotPattern";
 
@@ -33,7 +32,6 @@ const Home = () => (
           ⚡ See Our Plans
         </Link>
       </div>
-
     </div>
   </DotPattern>
 );

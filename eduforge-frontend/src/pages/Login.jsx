@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import DotPattern from '../components/DotPattern';
 import { login, signup } from '../api'; 
 import { useNavigate } from 'react-router-dom';
-import * as bootstrap from 'bootstrap';
-import toast, { Toaster } from 'react-hot-toast'; 
+import toast, { Toaster } from 'react-hot-toast';
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);

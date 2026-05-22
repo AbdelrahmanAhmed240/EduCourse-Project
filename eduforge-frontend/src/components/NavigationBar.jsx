@@ -1,4 +1,4 @@
-import { useState } from 'react'; 
+import { useState, useEffect } from 'react'; 
 import { Link, useNavigate } from 'react-router-dom';
 import { FaUserCircle } from 'react-icons/fa';
 import { useCourse } from '../context/CourseContext';
@@ -6,10 +6,16 @@ import { useCourse } from '../context/CourseContext';
 const NavigationBar = () => {
   const navigate = useNavigate();
   const { clearCourse } = useCourse();
-  
 
   const user = JSON.parse(localStorage.getItem('profile'));
   const [isOpen, setIsOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Added state for the user dropdown
+
+  useEffect(() => {
+    const closeDropdown = () => setIsDropdownOpen(false);
+    window.addEventListener('click', closeDropdown);
+    return () => window.removeEventListener('click', closeDropdown);
+  }, []);
 
   const handleLogout = () => {
     clearCourse();
@@ -32,7 +38,7 @@ const NavigationBar = () => {
           aria-controls="eduNavbar"
           aria-expanded={isOpen}
           aria-label="Toggle navigation"
-           data-bs-theme="dark"
+          data-bs-theme="dark"
         >
           <span className="navbar-toggler-icon"></span>
         </button>
@@ -55,17 +61,20 @@ const NavigationBar = () => {
 
             {user ? (
               <div className="nav-item dropdown">
-                <Link
-                  className="nav-link text-warning dropdown-toggle d-flex align-items-center gap-2" 
-                  href="#" 
-                  role="button" 
-                  data-bs-toggle="dropdown" 
-                  aria-expanded="false"
+                <button
+                  className="nav-link text-warning dropdown-toggle d-flex align-items-center gap-2 bg-transparent border-0" 
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation(); 
+                    setIsDropdownOpen(!isDropdownOpen);
+                  }}
+                  aria-expanded={isDropdownOpen}
                 >
                   <FaUserCircle size={25} />
                   <span className="small">{user.result.name.split(' ')[0]}</span>
-                </Link>
-                <ul className="dropdown-menu dropdown-menu-dark dropdown-menu-end">
+                </button>
+
+                <ul className={`dropdown-menu dropdown-menu-dark dropdown-menu-end position-absolute ${isDropdownOpen ? 'show' : ''}`} style={{ right: 0 }}>
                   <li><Link className="dropdown-item" to="/profile">My Profile</Link></li>
                   <li><Link className="dropdown-item" to="/dashboard">Dashboard</Link></li>
                   <li><hr className="dropdown-divider" /></li>

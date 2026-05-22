@@ -7,6 +7,7 @@ const auth = async (req, res, next) => {
 
         const decodedData = jwt.verify(token, process.env.JWT_SECRET);
         req.userId = decodedData?.id;
+        
         next();
     } catch (error) {
         res.status(401).json({ message: "Authentication failed" });
