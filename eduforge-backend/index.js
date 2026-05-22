@@ -13,7 +13,7 @@ const app = express();
 app.use(helmet());
 
 // Production Domain Access Rules
-const allowedOrigins = ['https://yourfrontenddomain.com', 'http://localhost:5173'];
+const allowedOrigins = ['https://educourseproject.vercel.app/', 'http://localhost:5173'];
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.includes(origin)) {
