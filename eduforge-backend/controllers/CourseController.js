@@ -42,8 +42,6 @@ export const createCourse = async (req, res) => {
         }
 
         // Wipe out any existing courses created by this user before generating a new one
-        await Course.deleteMany({ userId: req.userId });
-
         const promptContext = `You are an elite software engineer and technical educator. You respond exclusively in English via flawless, raw JSON objects conforming exactly to the user's schema definition. Never include unescaped quotes or raw backticks inside JSON values.
 
 Create a comprehensive, highly structured academic and practical course about "${topic}" tailored for a "${level}" level.
