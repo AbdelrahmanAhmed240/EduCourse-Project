@@ -13,10 +13,14 @@ const app = express();
 app.use(helmet());
 
 // Production Domain Access Rules
-const allowedOrigins = ['https://educourseproject.vercel.app/', 'http://localhost:5173'];
+// Remove the trailing slash '/' from the Vercel URL
+const allowedOrigins = ['https://educourseproject.vercel.app', 'http://localhost:5173'];
 app.use(cors({
     origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
             callback(new Error('Blocked by CORS policy rules'));
