@@ -21,7 +21,6 @@ const NavigationBar = () => {
     clearCourse();
     localStorage.removeItem('profile');
     navigate('/login');
-    window.location.reload(); 
   };
 
   return (
