@@ -25,20 +25,19 @@ const Generator = () => {
 
   const handleCreate = async (e) => {
     e.preventDefault();
-    if (!localStorage.getItem('profile')) return toast.error("Log in first!");
+    if (!localStorage.getItem('profile')) return toast.error("Please log in to continue.");
 
-    if (remaining === 0) {
-      return toast.error("0 creations remaining this week!");
-    }
+    if (remaining === 0) return toast.error("Limit reached for this week!");
 
     setLoading(true);
     try {
       const { data } = await saveCourse({ topic, units, level });
       updateCourse(data);
-      toast.success("Course Created! ✨");
+      toast.success("Course Created Successfully! ✨");
       navigate('/dashboard');
     } catch (error) {
-      toast.error(error.response?.data?.message || "Generation failed");
+      const errorMessage = error.response?.data?.message || "Something went wrong. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

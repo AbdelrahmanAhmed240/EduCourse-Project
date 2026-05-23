@@ -17,16 +17,9 @@ app.use(helmet());
 // Remove the trailing slash '/' from the Vercel URL
 const allowedOrigins = ['https://educourseproject.vercel.app', 'http://localhost:5173'];
 app.use(cors({
-    origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or curl)
-        if (!origin) return callback(null, true);
-        
-        if (allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Blocked by CORS policy rules'));
-        }
-    },
+    origin: ['https://educourseproject.vercel.app', 'http://localhost:5173'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }));
 
@@ -46,8 +39,14 @@ app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 
 const PORT = process.env.PORT || 5000;
-mongoose.connect(process.env.MONGO_URI, {
-    dbName: DB_NAME
-})
-.then(() => console.log("Connected to MongoDB Atlas database: " + DB_NAME))
-.catch((err) => console.error("Database connection failure:", err));
+
+mongoose.connect(process.env.MONGO_URI, { dbName: "eduforge" })
+    .then(() => {
+        console.log("Connected to MongoDB Atlas");
+        // IMPORTANT: Start the server ONLY after DB is connected
+        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    })
+    .catch((err) => {
+        console.error("Database connection failure:", err);
+        process.exit(1); // Kill the process if DB connection fails
+    });

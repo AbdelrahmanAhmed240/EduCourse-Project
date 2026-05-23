@@ -27,14 +27,12 @@ export const register = async (req, res) => {
             plan: 'Student' 
         });
 
-        // 🌟 Create a token so the user is instantly logged in on signup
         const token = jwt.sign(
             { id: newUser._id, email: newUser.email }, 
             process.env.JWT_SECRET, 
             { expiresIn: '24h' }
         );
 
-        // 🌟 Send back the identical data structure expected by your React profile state
         const userResponse = {
             _id: newUser._id,
             name: newUser.name,
@@ -70,9 +68,6 @@ export const login = async (req, res) => {
             process.env.JWT_SECRET, 
             { expiresIn: '24h' }
         );
-
-        // ✨ FIX 1: Added a missing comma after 'plan: user.plan'
-        // ✨ FIX 2: Changed 'existingUser.createdAt' to 'user.createdAt' (existingUser doesn't exist here!)
         const userResponse = {
             _id: user._id,
             name: user.name,
