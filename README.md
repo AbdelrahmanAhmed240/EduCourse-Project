@@ -1,12 +1,12 @@
-# 🚀 EduForge AI: AI-Powered Learning & Security Engineering Lab
+# 🚀 EduForge AI: AI-Powered Learning 
 
-EduForge AI is a dual-purpose platform that combines an AI learning system with a cybersecurity education lab focused on demonstrating and mitigating IDOR (Insecure Direct Object Reference) vulnerabilities.
+EduForge AI is an AI-powered learning platform that transforms any topic into a structured learning path. It also includes a separate cybersecurity lab branch for demonstrating IDOR vulnerabilities.
 
 ---
 
 ## ⚙️ Overview
 
-EduForge transforms any topic into a structured, academic-style learning path using AI while also teaching real-world backend security principles.
+EduForge helps learners go from curiosity to mastery by using AI to organize topics into modules, lessons, quizzes, and curated resources — like a personal university for any subject.
 
 ---
 
@@ -16,37 +16,6 @@ EduForge transforms any topic into a structured, academic-style learning path us
 - 📚 Breaks topics into modules and lessons  
 - 🎥 Integrates curated YouTube resources  
 - 🧪 Adds quizzes for active learning  
-
----
-
-## 🛡️ Security Engineering Lab (IDOR Focus)
-
-EduForge demonstrates insecure vs secure backend design.
-
-| Feature | Vulnerable | Secure |
-|--------|------------|--------|
-| Data Access | Client-side ID trust | JWT-based validation |
-| Authorization | Missing checks | Strict ownership rules |
-| Security State | IDOR exposed | Fully mitigated |
-
----
-
-## 🔐 IDOR Concept
-
-### Vulnerable Example
-GET /user/:id
-
-Attack:
-/1 → /2 → /3
-
-Impact:
-- Data leakage
-- Unauthorized access
-
-### Secure Fix
-- JWT identity verification
-- No trust in URL parameters
-- Backend enforces req.userId checks
 
 ---
 
@@ -89,12 +58,44 @@ AI: Hugging Face API + YouTube API
 
 ---
 
+
+## 🛡️ Cybersecurity Lab (Separate Vulnerable Branch)
+
+EduForge demonstrates insecure vs secure backend design.
+
+| Feature | Vulnerable | Secure |
+|--------|------------|--------|
+| Data Access | Client-side ID trust | JWT-based validation |
+| Authorization | Missing checks | Strict ownership rules |
+| Security State | IDOR exposed | Fully mitigated |
+
+---
+
+## 🔐 IDOR Concept
+
+### Vulnerable Example
+GET /user/:id
+
+Attack:
+/1 → /2 → /3
+
+Impact:
+- Data leakage
+- Unauthorized access
+
+### Secure Fix
+- JWT identity verification
+- No trust in URL parameters
+- Backend enforces req.userId checks
+
+----
+
 ## 🎯 Purpose
 
-Bridge the gap between building features and securing real-world applications.
+Help learners master AI-powered self-learning first, then optionally explore real-world backend vulnerabilities in a separate branch.
 
 ---
 
 ## ⚠️ Disclaimer
-This project is production-ready in its main branch.
-The vulnerable branch is included strictly for educational and security demonstration purposes (IDOR/CWE-639).
+The main AI learning branch is production-ready.
+The vulnerable branch is included strictly for security demonstration (IDOR/CWE-639) and is not part of the main AI learning platform.
